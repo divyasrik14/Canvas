@@ -1,6 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Table = () => {
+  const [value, setValue] = useState();
+
+  const handleSubmit = () => {
+    if (!value) {
+      alert("Please answer acceleration value");
+    }
+    alert(`Therefore the acceleration value is ${value} `);
+  };
+
   return (
     <div className="table">
       <h1>Table Data</h1>
@@ -42,10 +51,16 @@ const Table = () => {
       <div className="acceleration-fields">
         <span>
           {" "}
-          <p>Acceleration (m/s) :</p> <input></input>
+          <p>Acceleration (m/s) :</p>{" "}
+          <input
+            type="number"
+            name="acc"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          ></input>
         </span>
 
-        <button>Submit</button>
+        <button onClick={handleSubmit}>Submit</button>
       </div>
     </div>
   );

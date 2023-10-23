@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import graph from "../images/graph.jpg";
 import {
   EditOutlined,
   InfoCircleOutlined,
@@ -22,14 +21,17 @@ const Graph = () => {
     input12: 0,
     input13: 0,
   });
+
   const [cursor, setCursor] = useState("auto");
   const [inputFieldsDisabled, setInputFieldsDisabled] = useState(false);
+  const [letDraw, setLetDraw] = useState(false);
+  const [markedPoints, setMarkedPoints] = useState([]);
+
   const canvasRef = useRef(null);
   const pointsRef = useRef([]);
   const lineDrawingModeRef = useRef(false);
-  const startPointRef = useRef(null); // Add a reference for the start point
-  const endPointRef = useRef(null);
 
+  const startPointRef = useRef(null);
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -42,63 +44,55 @@ const Graph = () => {
   };
 
   const handleMarkClick = () => {
-    if (lineDrawingModeRef.current) {
-      lineDrawingModeRef.current = false;
-      setCursor("auto");
-    } else {
-      lineDrawingModeRef.current = true;
-      setCursor("crosshair");
-    }
-
-    // Toggle the enabled/disabled state of input fields
-    setInputFieldsDisabled(!inputFieldsDisabled);
-  };
-
-  const toggleLineDrawingMode = () => {
-    if (lineDrawingModeRef.current) {
-      lineDrawingModeRef.current = false;
-      setCursor("auto");
-    } else {
-      lineDrawingModeRef.current = true;
-      setCursor("crosshair");
-    }
+    setLetDraw(true);
+    lineDrawingModeRef.current = false;
+    setCursor("crosshair");
+    setInputFieldsDisabled(true);
   };
 
   const drawDot = (x, y) => {
+    if (!letDraw) {
+      return;
+    }
     const ctx = canvasRef.current.getContext("2d");
+
+    console.log(x, y);
 
     ctx.beginPath();
     ctx.arc(x, y, 6, 0, 2 * Math.PI);
     ctx.fill();
+    const markedPoint = { x, y };
+    pointsRef.current.push(markedPoint); // Store the marked point
+    setMarkedPoints([...markedPoints, markedPoint]);
   };
 
-  const drawLine = (startPoint, endPoint) => {
-    const ctx = canvasRef.current.getContext("2d");
-    ctx.beginPath();
-    ctx.moveTo(startPoint.x, startPoint.y);
-    ctx.lineTo(endPoint.x, endPoint.y);
-    ctx.stroke();
-  };
+  console.log(markedPoints);
 
   const handleCanvasClick = (e) => {
     const x = e.clientX - canvasRef.current.getBoundingClientRect().left;
     const y = e.clientY - canvasRef.current.getBoundingClientRect().top;
-    const clickedPoint = { x, y };
+
+    console.log(lineDrawingModeRef.current);
 
     if (lineDrawingModeRef.current) {
       if (startPointRef.current) {
-        // If a start point exists, set the end point
-        endPointRef.current = clickedPoint;
-        drawLine(startPointRef.current, endPointRef.current);
-        startPointRef.current = null; // Reset the start point
+        const startPoint = startPointRef.current;
+        drawLine(startPoint.x, startPoint.y, x, y);
+        startPointRef.current = null;
       } else {
-        // Set the start point
-        startPointRef.current = clickedPoint;
+        startPointRef.current = { x, y };
       }
     } else {
-      // If not in line drawing mode, remove the dot by not adding it to the points array
       drawDot(x, y);
     }
+  };
+
+  const drawLine = (x1, y1, x2, y2) => {
+    const ctx = canvasRef.current.getContext("2d");
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
   };
 
   useEffect(() => {
@@ -107,18 +101,12 @@ const Graph = () => {
 
     pointsRef.current.forEach((point) => {
       ctx.beginPath();
-      ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);
+      ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
       ctx.fill();
     });
-
-    canvas.addEventListener("click", drawDot);
-
-    return () => {
-      canvas.removeEventListener("click", drawDot);
-    };
   }, []);
 
-  console.log(values);
+  //   console.log(values);
 
   return (
     <div className="graph">
@@ -244,9 +232,9 @@ const Graph = () => {
 
         <span>
           <LineChartOutlined className="icon three" />
-          <button onClick={toggleLineDrawingMode}>
+          <button onClick={() => (lineDrawingModeRef.current = true)}>
             {" "}
-            Draw lines using this{" "}
+            Draw lines using this
           </button>
         </span>
       </div>

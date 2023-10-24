@@ -27,7 +27,7 @@ const Graph = () => {
   const [letDraw, setLetDraw] = useState(false);
   const [markedPoints, setMarkedPoints] = useState([]);
   const [drawnLines, setDrawnLines] = useState([]);
-  const [canRemovePoints, setCanRemovePoints] = useState(false)
+  const [canRemovePoints, setCanRemovePoints] = useState(false);
 
   const canvasRef = useRef(null);
   const pointsRef = useRef([]);
@@ -50,7 +50,7 @@ const Graph = () => {
     lineDrawingModeRef.current = false;
     setCursor("crosshair");
     setInputFieldsDisabled(true);
-    setCanRemovePoints(true)
+    setCanRemovePoints(true);
   };
 
   const drawDot = (x, y) => {
@@ -65,36 +65,16 @@ const Graph = () => {
     ctx.arc(x, y, 6, 0, 2 * Math.PI);
     ctx.fill();
     const markedPoint = { x, y };
-    pointsRef.current.push(markedPoint); // Store the marked point
+    pointsRef.current.push(markedPoint); 
     setMarkedPoints([...markedPoints, markedPoint]);
   };
 
   console.log(markedPoints);
 
-  // const handleCanvasClick = (e) => {
-  //   const x = e.clientX - canvasRef.current.getBoundingClientRect().left;
-  //   const y = e.clientY - canvasRef.current.getBoundingClientRect().top;
-
-  //   console.log(lineDrawingModeRef.current);
-
-  //   if (lineDrawingModeRef.current) {
-  //     if (startPointRef.current) {
-  //       const startPoint = startPointRef.current;
-  //       drawLine(startPoint.x, startPoint.y, x, y);
-  //       startPointRef.current = null;
-  //     } else {
-  //       startPointRef.current = { x, y };
-  //     }
-  //   } else {
-  //     drawDot(x, y);
-  //   }
-  // };
-
   const handleCanvasClick = (e) => {
     const x = e.clientX - canvasRef.current.getBoundingClientRect().left;
     const y = e.clientY - canvasRef.current.getBoundingClientRect().top;
 
-    // Check if the click is near any marked point
     const radius = 6;
     const clickedPointIndex = markedPoints.findIndex((point) => {
       const distance = Math.sqrt((point.x - x) ** 2 + (point.y - y) ** 2);
@@ -102,13 +82,22 @@ const Graph = () => {
     });
 
     if (canRemovePoints && clickedPointIndex !== -1) {
-      // Remove the clicked point from the state and redraw the canvas
       markedPoints.splice(clickedPointIndex, 1);
       setMarkedPoints([...markedPoints]);
       drawCanvas();
+      return;
+    }
+
+    if (lineDrawingModeRef.current) {
+      if (startPointRef.current) {
+        const startPoint = startPointRef.current;
+        drawLine(startPoint.x, startPoint.y, x, y);
+        startPointRef.current = null;
+      } else {
+        startPointRef.current = { x, y };
+      }
     } else {
-      // Check if the click is near any drawn line
-      const proximity = 5; // Adjust this value as needed
+      const proximity = 5; 
       const clickedLineIndex = drawnLines.findIndex((line) => {
         const distToStart = Math.sqrt((line.x1 - x) ** 2 + (line.y1 - y) ** 2);
         const distToEnd = Math.sqrt((line.x2 - x) ** 2 + (line.y2 - y) ** 2);
@@ -116,18 +105,9 @@ const Graph = () => {
       });
 
       if (clickedLineIndex !== -1) {
-        // Remove the clicked line from the state and redraw the canvas
         drawnLines.splice(clickedLineIndex, 1);
         setDrawnLines([...drawnLines]);
-        drawCanvas();
-      } else if (lineDrawingModeRef.current) {
-        if (startPointRef.current) {
-          const startPoint = startPointRef.current;
-          drawLine(startPoint.x, startPoint.y, x, y);
-          startPointRef.current = null;
-        } else {
-          startPointRef.current = { x, y };
-        }
+        drawCanvas();                   
       } else {
         drawDot(x, y);
       }
@@ -139,14 +119,12 @@ const Graph = () => {
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Redraw marked points
     markedPoints.forEach((point) => {
       ctx.beginPath();
       ctx.arc(point.x, point.y, 6, 0, 2 * Math.PI);
       ctx.fill();
     });
 
-    // Redraw drawn lines
     drawnLines.forEach((line) => {
       ctx.beginPath();
       ctx.moveTo(line.x1, line.y1);
@@ -162,7 +140,7 @@ const Graph = () => {
     ctx.lineTo(x2, y2);
     ctx.stroke();
     const drawnLine = { x1, y1, x2, y2 };
-    setDrawnLines([...drawnLines, drawnLine]); // Add the drawn line to the state
+    setDrawnLines([...drawnLines, drawnLine]); 
   };
 
   useEffect(() => {
@@ -302,7 +280,11 @@ const Graph = () => {
 
         <span>
           <LineChartOutlined className="icon three" />
-          <button onClick={() => (lineDrawingModeRef.current = true, setCanRemovePoints(false))}>
+          <button
+            onClick={() => (
+              (lineDrawingModeRef.current = true), setCanRemovePoints(false)
+            )}
+          >
             {" "}
             Draw lines using this
           </button>

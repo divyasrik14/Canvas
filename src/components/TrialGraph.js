@@ -1,13 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../TrialGraph.css";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  InfoCircleOutlined,
-  LineChartOutlined,
-} from "@ant-design/icons";
-import InstructionModal from "./InstructionModal";
 import pointToLineDistance from "../helperFunctions/pointToLineDistance";
+import Axes from "./Axes";
+import Buttons from "./Buttons";
 
 const TrialGraph = () => {
   const [xValues, setXValues] = useState({
@@ -182,72 +177,24 @@ const TrialGraph = () => {
             marginLeft: "70px",
           }}
         />
-        <div className="y-values">
-          <p>Velocity (m/s)</p>
-          <div className="y-values-inputs">
-            {Object.keys(yValues).map((key) => (
-              <div key={key}>
-                <input
-                  value={yValues[key]}
-                  type="number"
-                  onChange={(e) => handleYChange(e.target.value, key)}
-                  disabled={inputFieldsDisabled}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <input
-          type="number"
-          disabled={true}
-          value="0"
-          className="disabled-input"
+        <Axes
+          yValues={yValues}
+          xValues={xValues}
+          handleXChange={handleXChange}
+          handleYChange={handleYChange}
+          inputFieldsDisabled={inputFieldsDisabled}
         />
-
-        <div className="x-values">
-          <div className="x-values-inputs">
-            {Object.keys(xValues).map((key) => (
-              <div key={key}>
-                <input
-                  value={xValues[key]}
-                  type="number"
-                  onChange={(e) => handleXChange(e.target.value, key)}
-                  disabled={inputFieldsDisabled}
-                />
-              </div>
-            ))}
-          </div>
-          <p>Time (s) </p>
-        </div>
       </div>
 
       <div className="buttons">
-        <span>
-          <InfoCircleOutlined className="icon one" />
-          <button onClick={handleOpenModal}>Click here to view Instructions</button>
-        </span>
-
-        <span>
-          <EditOutlined className="icon two" />
-          <button onClick={handleMarkClick}>Mark Points using this</button>
-        </span>
-
-        <span>
-          <LineChartOutlined className="icon three" />
-          <button onClick={handleDrawClick}>Draw Lines Using this</button>
-        </span>
-
-        <span>
-          <DeleteOutlined className="icon four" />
-          <button onClick={handleRemoveModeClick}>
-            {isRemoveMode ? "Exit Remove Mode" : "Enter Remove Mode"}
-          </button>
-        </span>
-
-        <InstructionModal
-          visible={isModalVisible}
-          onClose={handleCloseModal}
+        <Buttons
+          handleOpenModal={handleOpenModal}
+          handleMarkClick={handleMarkClick}
+          handleDrawClick={handleDrawClick}
+          handleRemoveModeClick={handleRemoveModeClick}
+          isRemoveMode={isRemoveMode}
+          isModalVisible={isModalVisible}
+          handleCloseModal={handleCloseModal}
         />
       </div>
     </div>
@@ -255,5 +202,3 @@ const TrialGraph = () => {
 };
 
 export default TrialGraph;
-
-

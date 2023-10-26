@@ -1,0 +1,56 @@
+
+.trial {
+    display: flex;
+    flex-direction: row;
+    gap: 2em;
+}
+
+.trial input {
+  width: 15px;
+}
+
+.y-values-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 2.7em;
+  margin-bottom: 3.2em;
+  margin-left: 2.5em;
+}
+
+.y-values div:nth-child(1) {
+  margin-top: 3.3em;
+}
+
+.disabled-input {
+  margin-left: 3em;
+}
+
+.x-values-inputs {
+  display: flex;
+  flex-direction: row;
+  gap: 2.6em;
+  margin-left: 4.5em;
+  margin-top: -1.4em;
+}
+
+.x-values-inputs div:nth-child(1) {
+  margin-left: 3em;
+}
+
+.y-values p {
+  transform: rotate(270deg);
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  width: fit-content;
+  height: fit-content;
+  position: absolute;
+  margin-top: 15em;
+  margin-left: -30px;
+}
+
+.x-values p {
+    font-weight: bold;
+    margin-left: 15em;
+    margin-top: 1px;
+}

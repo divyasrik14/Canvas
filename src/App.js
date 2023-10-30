@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import Table from './components/Table';
-import Graph from './components/NewGraph';
+import Graph from './components/Graph';
 import TrialGraph from './components/TrialGraph';
 
 function App() {

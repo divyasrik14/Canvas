@@ -19,7 +19,7 @@ const Buttons = ({handleOpenModal, handleMarkClick, handleDrawClick, handleRemov
 
       <span>
         <EditOutlined className="icon two" />
-        <button onClick={handleMarkClick}>Mark Points using this</button>
+        <button onClick={handleMarkClick}>Mark / Unmark Points using this</button>
       </span>
 
       <span>

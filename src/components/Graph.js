@@ -4,7 +4,7 @@ import pointToLineDistance from "../helperFunctions/pointToLineDistance";
 import Axes from "./Axes";
 import Buttons from "./Buttons";
 
-const TrialGraph = () => {
+const Graph = () => {
   const [xValues, setXValues] = useState({
     input1: 0,
     input2: 0,
@@ -32,83 +32,67 @@ const TrialGraph = () => {
   // ref's
   const canvasRef = useRef(null);
 
-  useEffect(() => {
+  const handleCanvasClick = (event) => {
+    const canvas = canvasRef.current;
+    const x = event.clientX - canvas.getBoundingClientRect().left;
+    const y = event.clientY - canvas.getBoundingClientRect().top;
+
+    if (isRemoveMode) {
+      const lineToRemove = getLineToRemove(x, y);
+      if (lineToRemove) {
+        removeLine(lineToRemove);
+      }
+    } else if (isDrawing) {
+      const radius = 5;
+      const existingPointIndex = markedPoints.findIndex((point) => {
+        const distance = Math.sqrt((point.x - x) ** 2 + (point.y - y) ** 2);
+        return distance <= radius;
+      });
+
+      if (existingPointIndex !== -1) {
+        markedPoints.splice(existingPointIndex, 1); // Do nothing when a point is clicked while in drawing mode
+      } else {
+        markedPoints.push({ x, y });
+      }
+    } else {
+      connectingPoints.push({ x, y });
+
+      if (connectingPoints.length === 2) {
+        const [start, end] = connectingPoints;
+        connectingLines.push({
+          start: { ...start },
+          end: { ...end },
+        });
+        setConnectingPoints([]);
+      }
+    }
+    drawCanvas();
+  };
+
+  const drawCanvas = () => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
 
-    const handleCanvasClick = (event) => {
-      const x = event.clientX - canvas.getBoundingClientRect().left;
-      const y = event.clientY - canvas.getBoundingClientRect().top;
+    context.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (isRemoveMode) {
-        const lineToRemove = getLineToRemove(x, y);
-        if (lineToRemove) {
-          removeLine(lineToRemove);
-        }
-      } else if (isDrawing) {
-        const radius = 5;
-        const existingPointIndex = markedPoints.findIndex((point) => {
-          const distance = Math.sqrt((point.x - x) ** 2 + (point.y - y) ** 2);
-          return distance <= radius;
-        });
+    // Draw connecting lines
+    connectingLines.forEach((line) => {
+      context.strokeStyle = "blue";
+      context.lineWidth = 2;
+      context.beginPath();
+      context.moveTo(line.start.x, line.start.y);
+      context.lineTo(line.end.x, line.end.y);
+      context.stroke();
+    });
 
-        if (existingPointIndex !== -1) {
-          markedPoints.splice(existingPointIndex, 1); // Do nothing when a point is clicked while in drawing mode
-        } else {
-          markedPoints.push({ x, y });
-        }
-      } else {
-        connectingPoints.push({ x, y });
-
-        if (connectingPoints.length === 2) {
-          const [start, end] = connectingPoints;
-          connectingLines.push({
-            start: { ...start },
-            end: { ...end },
-          });
-          setConnectingPoints([]);
-        }
-        // }
-      }
-      drawCanvas();
-    };
-
-    function drawCanvas() {
-      context.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw connecting lines
-      connectingLines.forEach((line) => {
-        context.strokeStyle = "blue";
-        context.lineWidth = 2;
-        context.beginPath();
-        context.moveTo(line.start.x, line.start.y);
-        context.lineTo(line.end.x, line.end.y);
-        context.stroke();
-      });
-
-      // Draw marked points
-      markedPoints.forEach((point) => {
-        context.fillStyle = "black";
-        context.beginPath();
-        context.arc(point.x, point.y, 5, 0, 2 * Math.PI);
-        context.fill();
-      });
-    }
-
-    drawCanvas();
-
-    canvas.addEventListener("click", handleCanvasClick);
-
-    return () => {
-      canvas.removeEventListener("click", handleCanvasClick);
-    };
-  }, [
-    isDrawing,
-    markedPoints,
-    connectingPoints,
-    connectingLines,
-    isRemoveMode,
-  ]);
+    // Draw marked points
+    markedPoints.forEach((point) => {
+      context.fillStyle = "black";
+      context.beginPath();
+      context.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+      context.fill();
+    });
+  };
 
   const getLineToRemove = (x, y) => {
     return connectingLines.find((line) => {
@@ -170,6 +154,7 @@ const TrialGraph = () => {
             position: "absolute",
             marginLeft: "70px",
           }}
+          onClick={handleCanvasClick}
         />
         <Axes
           yValues={yValues}
@@ -195,4 +180,4 @@ const TrialGraph = () => {
   );
 };
 
-export default TrialGraph;
+export default Graph;

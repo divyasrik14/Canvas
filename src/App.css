@@ -113,13 +113,13 @@ input::-webkit-inner-spin-button {
   width: 130px;
   padding: 10px;
   border-right: 1px solid rgb(190, 190, 190);
-   border-bottom: 1px solid rgb(185, 185, 185);
-   margin-bottom: 10px;
-   box-shadow: 5px 5px 2px 2px rgb(225, 253, 227);
+  border-bottom: 1px solid rgb(185, 185, 185);
+  margin-bottom: 10px;
+  box-shadow: 5px 5px 2px 2px rgb(225, 253, 227);
 }
 
 .buttons button:hover {
-background-color: rgb(204, 203, 203);
+  background-color: rgb(204, 203, 203);
 }
 
 .icon {
@@ -176,6 +176,10 @@ input {
 
 .acceleration-fields button:hover {
   background-color: rgb(127, 148, 127);
+}
+
+.acceleration-fields input {
+  font-size: 16px;
 }
 
 button {
